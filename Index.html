@@ -1,0 +1,242 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <title>Chronos | Frequentieregeling</title>
+
+  <style>
+    :root {
+      --asvz-brand-green: #aec814; 
+      --asvz-pink: #e4007f;
+      --danger: #ff3b3b;
+      --muted: #cbd5e1;
+      --bg-0: #05070a;
+      --bg-1: #070b10;
+      --radius: 24px;
+    }
+
+    * { 
+      box-sizing: border-box; 
+      margin: 0; 
+      padding: 0; 
+    }
+
+    body {
+      height: 100dvh;
+      width: 100vw;
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+      color: #ffffff;
+      overflow: hidden;
+      background:
+        radial-gradient(1200px 750px at 50% 50%, rgba(228, 0, 127, 0.08), transparent 55%), 
+        linear-gradient(180deg, var(--bg-1), var(--bg-0));
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding: 16px;
+    }
+
+    body::before {
+      content: "";
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      background:
+        linear-gradient(rgba(255, 255, 255, 0.04) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255, 255, 255, 0.04) 1px, transparent 1px);
+      background-size: 60px 60px;
+      opacity: 0.15;
+      z-index: -1;
+    }
+
+    .card {
+      width: 100%;
+      max-width: 400px;
+      border-radius: var(--radius);
+      border: 1px solid rgba(255, 255, 255, 0.09);
+      background: linear-gradient(145deg, rgba(15, 23, 42, 0.75), rgba(7, 11, 20, 0.85));
+      box-shadow: 
+        0 40px 80px rgba(0, 0, 0, 0.7),
+        inset 0 1px 0 rgba(255, 255, 255, 0.15),
+        inset 0 -1px 0 rgba(255, 255, 255, 0.05);
+      backdrop-filter: blur(16px);
+      padding: 35px 24px;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      text-align: center;
+      gap: 24px;
+    }
+
+    .header-group {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      width: 100%;
+    }
+
+    .kicker {
+      font-weight: 800;
+      letter-spacing: 4px;
+      text-transform: uppercase;
+      color: var(--asvz-brand-green);
+      font-size: 0.85rem;
+      text-shadow: 0 0 15px rgba(174, 200, 20, 0.3);
+    }
+
+    .lore-text {
+      font-size: 1.15rem;
+      line-height: 1.5;
+      color: #ffffff;
+      padding: 0 4px;
+      font-weight: 700;
+    }
+
+    .beacon-window {
+      width: 100%;
+      height: 240px;
+      background-color: rgba(0, 0, 0, 0.5);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      border-radius: 18px;
+      position: relative;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      overflow: hidden;
+      box-shadow: inset 0 0 30px rgba(0,0,0,0.8);
+      transition: background-color 0.1s ease, border-color 0.1s ease, box-shadow 0.1s ease;
+    }
+
+    .lens {
+      width: 130px;
+      height: 130px;
+      border-radius: 50%;
+      background: radial-gradient(circle, #2b0000 0%, #05070a 75%);
+      border: 3px solid rgba(255, 255, 255, 0.08);
+      box-shadow: 0 10px 25px rgba(0,0,0,0.6);
+      position: relative;
+      transition: background 0.1s ease, border-color 0.1s ease, box-shadow 0.1s ease;
+    }
+
+    .beacon-window.flash-on {
+      background-color: rgba(255, 59, 59, 0.1);
+      border-color: rgba(255, 59, 59, 0.6);
+      box-shadow: inset 0 0 40px rgba(255, 59, 59, 0.3);
+    }
+
+    .beacon-window.flash-on .lens {
+      background: radial-gradient(circle, #ffffff 0%, var(--danger) 50%, #7a0000 100%);
+      border-color: rgba(255, 255, 255, 0.8);
+      box-shadow: 
+        0 0 50px 15px rgba(255, 59, 59, 0.65),
+        0 0 80px 30px rgba(255, 59, 59, 0.35),
+        inset 0 0 15px #ffffff;
+    }
+
+    .sync-container {
+      width: 100%;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .sync-label {
+      font-size: 0.8rem;
+      text-transform: uppercase;
+      letter-spacing: 3px;
+      color: var(--muted);
+      font-weight: 800;
+      text-align: left;
+    }
+
+    .progress-track {
+      width: 100%;
+      height: 12px;
+      background: rgba(0, 0, 0, 0.5);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      border-radius: 30px;
+      overflow: hidden;
+    }
+
+    .progress-bar {
+      height: 100%;
+      width: 0%;
+      background: linear-gradient(90deg, var(--asvz-pink), #bc0069);
+      box-shadow: 0 0 20px rgba(228, 0, 127, 0.4);
+    }
+  </style>
+</head>
+<body>
+
+  <div class="card">
+    <div class="header-group">
+      <div class="kicker">Analoog Data-Signaal</div>
+      <p class="lore-text">De tijdmachine stuurt in 2036 nog steeds oude failsafe-signalen. Lees het signaal om een stukje van het wachtwoord te krijgen.</p>
+    </div>
+    
+    <div id="beacon" class="beacon-window">
+      <div class="lens"></div>
+    </div>
+    
+    <div class="sync-container">
+      <div class="sync-label">Cyclus Voortgang</div>
+      <div class="progress-track">
+        <div id="progressBar" class="progress-bar"></div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const beacon = document.getElementById('beacon');
+    const progressBar = document.getElementById('progressBar');
+
+    const UNIT = 220; 
+
+    const sequence = [
+      1, 1, 3, 14,             
+      3, 1, 1, 1, 3, 1, 1, 14, 
+      1, 1, 1, 1, 1, 1, 1, 14, 
+      3, 28                    
+    ];
+
+    const totalUnits = sequence.reduce((sum, val) => sum + val, 0);
+    const totalLoopTime = totalUnits * UNIT;
+
+    let sequenceIndex = 0;
+
+    function runMorseLoop() {
+      if (sequenceIndex >= sequence.length) {
+        sequenceIndex = 0;
+        restartProgressBar(); 
+      }
+
+      const isLightOn = (sequenceIndex % 2 === 0);
+      const currentDuration = sequence[sequenceIndex] * UNIT;
+
+      if (isLightOn) {
+        beacon.classList.add('flash-on');
+      } else {
+        beacon.classList.remove('flash-on');
+      }
+
+      sequenceIndex++;
+      setTimeout(runMorseLoop, currentDuration);
+    }
+
+    function restartProgressBar() {
+      progressBar.style.transition = 'none';
+      progressBar.style.width = '0%';
+      void progressBar.offsetWidth; 
+      progressBar.style.transition = `width ${totalLoopTime}ms linear`;
+      progressBar.style.width = '100%';
+    }
+
+    window.onload = () => {
+      runMorseLoop();
+      restartProgressBar();
+    };
+  </script>
+</body>
+</html>
